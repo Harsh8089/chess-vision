@@ -1,28 +1,13 @@
-import { useEffect, useState } from "react";
 import { useGameContext } from "../context/GameContext";
 
-function OpponentBoard({ socket, cell } : { socket: WebSocket | null, cell: string }) {
+function OpponentBoard({ socket, opponentCell, opponentCorrectCell } : { socket: WebSocket | null, opponentCell: string, opponentCorrectCell: boolean[] }) {
     const { opponentUsername } = useGameContext();
-    const [cellToClick, setCellToClick] = useState<string>(cell);
-
-    useEffect(() => {
-        if(socket) {
-            const handleMessage = (event: MessageEvent) => {
-                const message = JSON.parse(event.data);
-                if(message.type === 'PROVIDE' && message.player2) setCellToClick(message.cellToClick);
-                else if(message.type === 'VERIFY') console.log(message); 
-            }
-
-            socket.addEventListener('message', handleMessage);
-
-            return () => socket.removeEventListener('message', handleMessage);
-        }
-    }, [socket]);
+    
 
   return (
-    <div className="w-[40vw]">
+    <div className="w-[40vw] gap-10 flex">
         <div>{opponentUsername}</div>
-        <div>{cellToClick}</div>
+        <div>{opponentCell}</div>
         <div className="w-full md:w-3/4 aspect-square grid grid-cols-9 grid-rows-9">
             {
                 Array.from({ length: 81 }, (_, index) => {
@@ -32,7 +17,7 @@ function OpponentBoard({ socket, cell } : { socket: WebSocket | null, cell: stri
                     let cellStyle = "";
 
                     if(row == 8 && col == 0) {
-
+                        
                     }
                     else if(col == 0) {
                         cell = (8 - row).toString();
@@ -60,6 +45,22 @@ function OpponentBoard({ socket, cell } : { socket: WebSocket | null, cell: stri
                 })
             }
         </div>
+
+        <div className="flex flex-row md:flex-col justify-center items-center gap-2 mt-4 md:mt-0">
+              {Array.from({ length: 5 }, (_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full ${
+                    opponentCorrectCell[idx] === true
+                      ? "bg-green-500"
+                      : opponentCorrectCell[idx] === false
+                      ? "bg-red-500"
+                      : "bg-gray-500"
+                  }`}
+                />
+              ))}
+        </div>
+
     </div>
   )
 }

@@ -34,40 +34,43 @@ class Game {
                 message: `Room created with ID - ${room_id}`,
             }
         ))
+        console.log(this.cellSequence);
     }
 
     handleCellClicked(socket, cell) {
         if(socket == this.player1) {
-            socket.send(JSON.stringify(
-                {
-                    type: 'PROVIDE',
-                    player1: true,
-                    player2: false,
-                    cellToClick: this.cellSequence[++this.player1PlayCount]
-                }
-            ));
+            // send player next cell to be clicked
+            this.player1.send(JSON.stringify({
+                status: 'PROVIDE',
+                cellToClick: this.cellSequence[++this.player1PlayCount]
+            }));
+            this.player2.send(JSON.stringify({
+                status: 'OPPONENT',
+                cellToClick: this.cellSequence[this.player1PlayCount]
+            }))
 
+            // send opponent to verify
             this.player2.send(JSON.stringify(
                 {
-                    type: 'VERIFY',
+                    status: 'VERIFY',
                     cellToClick: this.cellSequence[this.player1PlayCount - 1], // cell suppossed to be clicked by player 1
                     cellClicked: cell, // cell clicked by player 1
                 }
             ))
         }
         else {
-            socket.send(JSON.stringify(
-                {
-                    type: 'PROVIDE',
-                    player2: true,
-                    player1: false,
-                    cellToClick: this.cellSequence[++this.player2PlayCount]
-                }
-            ));
+            this.player2.send(JSON.stringify({
+                status: 'PROVIDE',
+                cellToClick: this.cellSequence[++this.player2PlayCount]
+            }));
+            this.player1.send(JSON.stringify({
+                status: 'OPPONENT',
+                cellToClick: this.cellSequence[this.player2PlayCount]
+            }))
 
             this.player1.send(JSON.stringify(
                 {
-                    type: 'VERIFY',
+                    status: 'VERIFY',
                     cellToClick: this.cellSequence[this.player2PlayCount - 1], // cell suppossed to be clicked by player 2
                     cellClicked: cell, // cell clicked by player 2
                 }

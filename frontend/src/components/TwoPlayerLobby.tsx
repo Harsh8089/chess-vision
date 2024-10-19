@@ -10,22 +10,37 @@ import OpponentBoard from './OpponentBoard';
 function TwoPlayerLobby() {
     const socket = useSocket();
     const { opponentUsername, setOpponentUsername } = useGameContext();
-    const [cell, setCell] = useState<string>("");
+    const [myCell, setMyCell] = useState<string>("");
+    const [opponentCell, setOpponentCell] = useState<string>("");
 
-    useEffect(() => {
+    const [opponentCorrectCell, setOpponentCorrectCell] = useState<boolean[]>([]);
+
+      useEffect(() => {
         if(socket) {
-            socket.onmessage = (event) => { 
+            const handleMessage = (event: MessageEvent) => {
                 const message = JSON.parse(event.data);
                 console.log(message);
-                if(message.success) {
-                    if(message.status == INIT_GAME) {
-                        setOpponentUsername(message.opponent);
-                        setCell(message.cellToClick);
-                    }
+                if(message.status == INIT_GAME) {
+                    setOpponentUsername(message.opponent);
+                    setMyCell(message.cellToClick);
+                    setOpponentCell(message.cellToClick);
+                }
+                else if(message.status === 'PROVIDE') setMyCell(message.cellToClick);
+                else if(message.status === 'OPPONENT') {
+                    setOpponentCell(message.cellToClick);
+                }
+                else if(message.status === 'VERIFY') {
+                    setOpponentCorrectCell((prev) => {
+                        return [...prev, message.cellToClick === message.cellClicked];
+                    })
                 }
             }
+    
+            socket.addEventListener('message', handleMessage);
+    
+            return () => socket.removeEventListener('message', handleMessage);
         }
-      }, [socket])
+      }, [socket]);
     
 
   return (
@@ -53,11 +68,12 @@ function TwoPlayerLobby() {
                 <div className='flex w-[100vw] justify-between'>
                     <MyBoard
                         socket={socket}
-                        cell={cell}
+                        myCell={myCell}
                     />
                     <OpponentBoard
                         socket={socket}
-                        cell={cell}
+                        opponentCell={opponentCell}
+                        opponentCorrectCell={opponentCorrectCell}
                     />
                 </div>
             )

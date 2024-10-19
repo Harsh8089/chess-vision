@@ -1,39 +1,42 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { CELL_CLICKED } from "../consts/Message";
 import { useGameContext } from "../context/GameContext";
 
-function MyBoard({ socket, cell }: { socket: WebSocket | null; cell: string }) {
+function MyBoard({ socket, myCell }: { socket: WebSocket | null; myCell: string }) {
   const { username, roomId } = useGameContext();
-  const [cellToClick, setCellToClick] = useState<string>(cell);
-
-  const handleClick = (row: number, col: number) => {
-        socket?.send(JSON.stringify({
-            type: CELL_CLICKED,
-            room_id: roomId,
-            cell: String.fromCharCode(col + 97) + (8 - row).toString()
-        }));
-    }
+  const [cellClicked, setCellClicked] = useState<string[]>([]);
+  const [correctCell, setCorrectCell] = useState<boolean[]>([]);
 
   useEffect(() => {
-    if(socket) {
-        const handleMessage = (event: MessageEvent) => {
-            const message = JSON.parse(event.data);
-            if(message.type === 'PROVIDE' && message.player1) setCellToClick(message.cellToClick);
-            else if(message.type === 'VERIFY') console.log(message); 
-        }
-
-        socket.addEventListener('message', handleMessage);
-
-        return () => socket.removeEventListener('message', handleMessage);
+    let currTry: number = cellClicked.length - 1;
+    if (currTry >= 0) {
+      if (cellClicked[currTry] === myCell) {
+        console.log("correct");
+        setCorrectCell((prev) => [...prev, true]);
+      } else {
+        setCorrectCell((prev) => [...prev, false]);
+      }
     }
-  }, [socket]);
+  }, [cellClicked]);
 
-  console.log("Rendering with cellToClick:", cellToClick);
+
+  const handleClick = (row: number, col: number) => {
+      const cell = String.fromCharCode(col + 97) + (8 - row).toString();
+
+      socket?.send(JSON.stringify({
+          type: CELL_CLICKED,
+          room_id: roomId,
+          cell
+      }));
+
+      setCellClicked((prev) => [...prev, cell]);
+  }
+
 
   return (
-    <div className="w-[40vw]">
+    <div className="w-[40vw] gap-10 flex">
       <div>{username}</div>
-      <div>{cellToClick}</div>
+      <div>{myCell}</div>
       <div className="w-full md:w-3/4 aspect-square grid grid-cols-9 grid-rows-9">
         {Array.from({ length: 81 }, (_, index) => {
           const row = Math.floor(index / 9);
@@ -65,6 +68,23 @@ function MyBoard({ socket, cell }: { socket: WebSocket | null; cell: string }) {
           );
         })}
       </div>
+      
+      <div className="flex flex-row md:flex-col justify-center items-center gap-2 mt-4 md:mt-0">
+              {Array.from({ length: 5 }, (_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full ${
+                    correctCell[idx] === true
+                      ? "bg-green-500"
+                      : correctCell[idx] === false
+                      ? "bg-red-500"
+                      : "bg-gray-500"
+                  }`}
+                />
+              ))}
+        </div>
+
+
     </div>
   );
 }
