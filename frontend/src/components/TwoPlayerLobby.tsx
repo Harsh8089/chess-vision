@@ -2,12 +2,15 @@ import Form from './Form';
 import Button from './Button'
 import { CREATE_ROOM, INIT_GAME, JOIN_ROOM } from '../consts/Message'
 import useSocket from '../hooks/useSocket';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameContext } from '../context/GameContext';
+import MyBoard from './MyBoard';
+import OpponentBoard from './OpponentBoard';
 
 function TwoPlayerLobby() {
     const socket = useSocket();
     const { opponentUsername, setOpponentUsername } = useGameContext();
+    const [cell, setCell] = useState<string>("");
 
     useEffect(() => {
         if(socket) {
@@ -17,6 +20,7 @@ function TwoPlayerLobby() {
                 if(message.success) {
                     if(message.status == INIT_GAME) {
                         setOpponentUsername(message.opponent);
+                        setCell(message.cellToClick);
                     }
                 }
             }
@@ -46,7 +50,16 @@ function TwoPlayerLobby() {
                 </div>
             ):
             (
-                <div>Game Board</div>
+                <div className='flex w-[100vw] justify-between'>
+                    <MyBoard
+                        socket={socket}
+                        cell={cell}
+                    />
+                    <OpponentBoard
+                        socket={socket}
+                        cell={cell}
+                    />
+                </div>
             )
         }
     </>

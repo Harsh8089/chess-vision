@@ -1,6 +1,4 @@
-import { useEffect } from "react";
 import { useGameContext } from "../context/GameContext";
-import { INIT_GAME } from "../consts/Message";
 
 interface ButtonProps {
   socket: WebSocket | null;

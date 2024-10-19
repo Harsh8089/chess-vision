@@ -1,4 +1,4 @@
-import { CREATE_ROOM, EXIT_ROOM, INIT_GAME, JOIN_ROOM, MOVE } from "./message.js";
+import { CREATE_ROOM, EXIT_ROOM, INIT_GAME, JOIN_ROOM, CELL_CLICKED } from "./message.js";
 import Game from "./Game.js";
 
 class GameManager {
@@ -13,7 +13,7 @@ class GameManager {
             try {
                 const data = JSON.parse(message);
                 console.log(data);
-                const { type, room_id, move, username } = data;
+                const { type, room_id, cell, username } = data;
                 
                 // init new game
                 if(type == CREATE_ROOM) {
@@ -38,13 +38,15 @@ class GameManager {
                                 success: true,
                                 opponent: game.player2_username,
                                 status: INIT_GAME,
-                                room_id
+                                room_id,
+                                cellToClick: game.cellSequence[0],
                             }));
                             game.player2.send(JSON.stringify({
                                 success: true,
                                 opponent: game.player1_username,
                                 status: INIT_GAME,
-                                room_id
+                                room_id,
+                                cellToClick: game.cellSequence[0],
                             }));
                         }
                         else {
@@ -85,11 +87,11 @@ class GameManager {
                         ))
                     }
                 }
-                else if(type == MOVE) {
+                else if(type == CELL_CLICKED) {
                     if(this.games.has(room_id)) {
                         const game = this.games.get(room_id);
                         if(game.player1 != null && game.player2 != null) {
-                            game.makeMove(socket, move);
+                            game.handleCellClicked(socket, cell);
                         }
                     }
                 }
