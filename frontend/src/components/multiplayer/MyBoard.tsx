@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { CELL_CLICKED } from "../consts/Message";
-import { useGameContext } from "../context/GameContext";
+import { CELL_CLICKED } from "../../consts/Message";
+import { useGameContext } from "../../context/GameContext";
 
 function MyBoard({ socket, myCell }: { socket: WebSocket | null; myCell: string }) {
   const { username, roomId } = useGameContext();

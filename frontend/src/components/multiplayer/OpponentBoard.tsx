@@ -1,4 +1,4 @@
-import { useGameContext } from "../context/GameContext";
+import { useGameContext } from "../../context/GameContext";
 
 function OpponentBoard({ socket, opponentCell, opponentCorrectCell } : { socket: WebSocket | null, opponentCell: string, opponentCorrectCell: boolean[] }) {
     const { opponentUsername } = useGameContext();

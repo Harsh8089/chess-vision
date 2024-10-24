@@ -1,5 +1,5 @@
 import { GameProvider } from '../context/GameContext';
-import TwoPlayerLobby from '../components/TwoPlayerLobby';
+import TwoPlayerLobby from '../components/multiplayer/TwoPlayerLobby';
 
 function TwoPlayer() {
   return (

@@ -1,4 +1,4 @@
-import { useGameContext } from "../context/GameContext";
+import { useGameContext } from "../../context/GameContext";
 
 function Form() {
     const { username, setUsername, roomId, setRoomId } = useGameContext();

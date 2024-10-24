@@ -1,9 +1,9 @@
 import Form from './Form';
 import Button from './Button'
-import { CREATE_ROOM, INIT_GAME, JOIN_ROOM } from '../consts/Message'
-import useSocket from '../hooks/useSocket';
+import { CREATE_ROOM, INIT_GAME, JOIN_ROOM } from '../../consts/Message'
+import useSocket from '../../hooks/useSocket';
 import { useEffect, useState } from 'react';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../../context/GameContext';
 import MyBoard from './MyBoard';
 import OpponentBoard from './OpponentBoard';
 

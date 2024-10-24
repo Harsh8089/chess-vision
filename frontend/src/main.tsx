@@ -4,13 +4,19 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { AuthProvider } from './context/AuthContext.tsx'
+import { SinglePlayerProvider } from './context/SinglePlayer.tsx'
+
+var clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 createRoot(document.getElementById('root')!).render(
-   <GoogleOAuthProvider clientId='587739017297-o43mql4rji7ak23q4vjb4hree1j51sd5.apps.googleusercontent.com'>
+
+   <GoogleOAuthProvider clientId={clientId}>
         <AuthProvider>
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
+            <SinglePlayerProvider>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </SinglePlayerProvider>
         </AuthProvider>
    </GoogleOAuthProvider>
 )
