@@ -10,25 +10,36 @@ import Chart from "../Chart";
 import Timer from "../../types/timer";
 
 function GamePlay() {
-  const { selectedTime, selectedCells } = useSinglePlayer();
+  const { selectedTime, selectedCells, setStartGame } = useSinglePlayer();
 
   const [cellSequence, setCellSequence] = useState<string[]>([]);
   const [cellClicked, setCellClicked] = useState<string[]>([]);
   const [correctCell, setCorrectCell] = useState<boolean[]>([]);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [stats, setStats] = useState<Timer>([]);
+  const [countDown, setCountDown] = useState<number>(selectedTime?  selectedTime * 1000 : 0);
 
   const fadeOutRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<number | null>(null);
   
   useEffect(() => {
     setStartTime(Date.now());
     if(selectedCells) setCellSequence(initCellSequenceByCellCount(selectedCells));
+    else setCellSequence(initCellSequenceByCellCount(Number(selectedTime) * 3)); // gen square cells 3 times more than time
+
+    if(selectedTime) {
+      intervalRef.current = setInterval(() => {
+        setCountDown((prev) => prev - 1000);
+      }, 1000);
+    }
+
+    return () => {
+      if(intervalRef.current) clearInterval(intervalRef.current);
+      setStartGame(false);
+    }
   }, []);
 
-  const handleClick = (row: number, col: number) => {
-    setStats((prev) => [...prev, { name: '', time: (Date.now() - startTime!) / 1000 }])
-    setStartTime(Date.now());
-
+  useEffect(() => {
     let currTry: number = cellClicked.length - 1;
     if (currTry >= 0) {
       if (cellClicked[currTry] === cellSequence[currTry]) {
@@ -37,6 +48,11 @@ function GamePlay() {
         setCorrectCell((prev) => [...prev, false]);
       }
     }
+  }, [cellClicked])
+
+  const handleClick = (row: number, col: number) => {
+    setStats((prev) => [...prev, { name: '', time: (Date.now() - startTime!) / 1000 }])
+    setStartTime(Date.now());
 
     const cell = String.fromCharCode(col + 97) + (8 - row).toString();
     setCellClicked((prev) => [...prev, cell]);
@@ -50,9 +66,9 @@ function GamePlay() {
 
   return (
     <div className="w-[80vw] flex justify-center items-center">
-      {cellClicked.length < cellSequence.length ? (
+      {cellClicked.length < cellSequence.length && ( selectedTime ? countDown > 0 : true ) ? (
         <div className="flex w-full">
-          <div className="flex flex-col  w-3/4 justify-center items-center">
+          <div className="flex flex-col w-3/4 justify-center items-center">
             <div className="flex flex-col items-center w-full">
               <div className="flex justify-center items-center w-full">
                 <Row style="h-full w-10 text-white grid grid-rows-8" />
@@ -76,6 +92,7 @@ function GamePlay() {
             </div>
           </div>
           <CellResultTracker 
+            countDown={selectedTime}
             style="w-1/3"
             correctCell={correctCell}
             cellSequence={cellSequence}

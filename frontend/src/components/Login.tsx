@@ -2,66 +2,50 @@ import { useGoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { LogIn } from 'lucide-react';
+import { Lock, LogIn, Mail } from 'lucide-react';
+import FormInput from './auth/FormInput';
+import Button from './auth/Button';
 
 interface IFormInput {
-    email: string,
-    password: string
+    email: string;
+    password: string;
 }
 
 interface FormField {
     name: keyof IFormInput;
     placeholder: string;
     type?: string;
+    icon: React.ReactNode;
     validation: Record<string, any>;
 }
-
 
 const formFields: FormField[] = [
     {
         name: 'email',
-        placeholder: 'email',
+        placeholder: 'Email',
+        icon: <Mail className="h-5 w-5" />,
         validation: {
-            required: "Email is required"
+            required: "Email is required",
+            pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address"
+            }
         }
     },
     {
         name: 'password',
-        placeholder: 'password',
+        placeholder: 'Password',
         type: 'password',
+        icon: <Lock className="h-5 w-5" />,
         validation: {
             required: "Password is required",
+            minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters"
+            }
         }
-    }
+    },
 ]
-
-const FormInput = ({ 
-    field, 
-    register, 
-    errors, 
-    watch 
-}: { 
-    field: FormField;
-    register: any;
-    errors: any;
-    watch?: any;
-}) => {
-    
-    return (
-        <div className='w-3/4'>
-            <input 
-                className='w-full flex flex-col gap-2 px-2 border-none outline-none h-10 rounded-md  bg-gray-600 text-white'
-                type={field.type || 'text'}
-                placeholder={field.placeholder}
-                {...register(field.name, field.validation)} 
-            />
-            {errors[field.name] && (
-                <p className='text-red-light'>{errors[field.name].message}</p>
-            )}
-        </div>
-    );
-};
-
 
 function Login() {
     const { setUser } = useAuth();
@@ -79,21 +63,26 @@ function Login() {
         }
     });
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm<IFormInput>();
+    const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
     return (
-        <div className='w-1/2 flex flex-col justify-between items-center opacity-80'>
-            <div className='flex gap-4 text-xl w-full justify-center'>
-                <LogIn />
-                <h2>Login</h2>
+        <div className='w-full max-w-md mx-auto p-6 space-y-8'>
+            <div className="flex flex-col items-center gap-2">
+                <div className="p-3 bg-blue-500 bg-opacity-10 rounded-full">
+                    <LogIn className="h-6 w-6 text-blue-500" />
+                </div>
+                <h2 className="text-2xl font-semibold">Welcome Back</h2>
+                <p className="text-gray-400 text-center">
+                    Log in to your account and continue your journey
+                </p>
             </div>
             <form 
                 onSubmit={handleSubmit(onSubmit)}
                 className='flex flex-col gap-4 items-center justify-center w-full mt-10'
             >
                 {formFields.map((field) => (
-                    <FormInput 
+                    <FormInput
                         key={field.name}
                         field={field}
                         register={register}
@@ -102,17 +91,16 @@ function Login() {
                     />
                 ))}
 
-                <button 
-                    type="submit" 
-                    className='bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-200 w-3/4'
-                >
-                    Login
-                </button>
+                <Button isSubmitting={isSubmitting} title='Login' />
             </form>
-            <div className='m-6'>OR</div>
+            <div className="flex justify-center items-center">
+                <div className="w-20 h-[1px] bg-white/20" />
+                <span className="px-4 text-white/60">or</span>
+                <div className="w-20 h-[1px] bg-white/20" />
+            </div>
             <button 
                 onClick={() => login()}
-                className='border-white border-2 w-3/4 p-2 rounded-lg place-items-end'
+                className='border-white border-2 w-full p-2 rounded-lg place-items-end'
             >
                 Sign in with Google 🚀 
             </button>

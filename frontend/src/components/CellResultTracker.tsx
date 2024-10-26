@@ -1,13 +1,15 @@
 import { Check, CircleCheck, CircleX, Clock, Gauge, X } from "lucide-react";
 import Timer from "./Timer";
+import CountDown from "./CountDown";
 
 interface CellResultTrackerProps {
-    style: string;
-    correctCell: boolean[],
-    cellSequence: string[]
+  countDown: number | null;
+  style: string;
+  correctCell: boolean[];
+  cellSequence: string[]
 }
 
-function CellResultTracker({ style, correctCell, cellSequence }: CellResultTrackerProps) {
+function CellResultTracker({ countDown, style, correctCell, cellSequence }: CellResultTrackerProps) {
   return (
     <div className={`${style} bg-blue-light bg-opacity-20 rounded-xl p-3 flex flex-col gap-2 text-white`}>
       <div className="flex flex-col items-center gap-2">
@@ -22,7 +24,9 @@ function CellResultTracker({ style, correctCell, cellSequence }: CellResultTrack
       <div className="flex justify-around items-center border-b border-slate-600 pb-3 h-16">
         <div className="flex items-center gap-2">
           <Clock className="text-blue-light" size={20} />
-          <Timer />
+          {
+            countDown ? <CountDown countDownTime={countDown} /> : <Timer />
+          }
         </div>
         <div className="flex items-center gap-2">
           <Gauge className="text-green-light" size={20} />
@@ -45,7 +49,7 @@ function CellResultTracker({ style, correctCell, cellSequence }: CellResultTrack
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-1">
+      <div className="grid grid-cols-4 gap-1 overflow-y-scroll max-h-[40vh]">
         {Array.from({ length: correctCell.length }, (_, index) => (
           <div
             key={index}
