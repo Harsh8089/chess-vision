@@ -21,7 +21,6 @@ function Board({ style, cellClicked, cellSequence, handleClick, children }: Boar
 
                 cell = String.fromCharCode(col + 97) + (8 - row).toString();
                 if (cellClicked.length > 0 && cell === cellClicked[cellClicked.length - 1]) {
-                    console.log(cellClicked[cellClicked.length - 1], cellSequence[cellClicked.length - 1], cellClicked.length - 1);
                     cellColor = cellClicked[cellClicked.length - 1] === cellSequence[cellClicked.length - 1] ? "bg-green-300" : "bg-red-300";
                 } else {
                     cellColor = (row + col) % 2 === 0 ? "bg-blue-800" : "bg-blue-100";

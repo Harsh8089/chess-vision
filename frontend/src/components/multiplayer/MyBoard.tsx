@@ -10,12 +10,8 @@ function MyBoard({ socket, myCell }: { socket: WebSocket | null; myCell: string 
   useEffect(() => {
     let currTry: number = cellClicked.length - 1;
     if (currTry >= 0) {
-      if (cellClicked[currTry] === myCell) {
-        console.log("correct");
-        setCorrectCell((prev) => [...prev, true]);
-      } else {
-        setCorrectCell((prev) => [...prev, false]);
-      }
+      if (cellClicked[currTry] === myCell) setCorrectCell((prev) => [...prev, true]);
+      else setCorrectCell((prev) => [...prev, false]);
     }
   }, [cellClicked]);
 

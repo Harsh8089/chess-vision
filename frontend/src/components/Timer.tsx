@@ -5,15 +5,15 @@ function Timer() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setTime(prev => prev + 1000); // Increase time by 1000 milliseconds (1 second)
-        }, 1000); // Set interval to 1 second
+            setTime(prev => prev + 1000); 
+        }, 1000); 
        
-        return () => clearInterval(interval); // Clear interval on component unmount
+        return () => clearInterval(interval); 
     }, []);
 
-    // Calculate minutes and seconds
-    const minutes = Math.floor(time / 60000); // Convert time to minutes
-    const seconds = Math.floor((time % 60000) / 1000); // Get remaining seconds
+    
+    const minutes = Math.floor(time / 60000); 
+    const seconds = Math.floor((time % 60000) / 1000);
 
     return (
         <div className="text-lg font-semibold">

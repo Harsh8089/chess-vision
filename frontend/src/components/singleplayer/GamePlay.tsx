@@ -6,6 +6,8 @@ import Column from "../Column";
 import CellResultTracker from "../CellResultTracker";
 import "../../styles/fadeOutText.css"
 import { useSinglePlayer } from "../../context/SinglePlayer";
+import Chart from "../Chart";
+import Timer from "../../types/timer";
 
 function GamePlay() {
   const { selectedTime, selectedCells } = useSinglePlayer();
@@ -13,16 +15,20 @@ function GamePlay() {
   const [cellSequence, setCellSequence] = useState<string[]>([]);
   const [cellClicked, setCellClicked] = useState<string[]>([]);
   const [correctCell, setCorrectCell] = useState<boolean[]>([]);
-  const [time, setTime] = useState(0);
-  const [stats, setStats] = useState<number[]>([]);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [stats, setStats] = useState<Timer>([]);
 
   const fadeOutRef = useRef<HTMLDivElement>(null);
-
+  
   useEffect(() => {
+    setStartTime(Date.now());
     if(selectedCells) setCellSequence(initCellSequenceByCellCount(selectedCells));
   }, []);
 
-  useEffect(() => {
+  const handleClick = (row: number, col: number) => {
+    setStats((prev) => [...prev, { name: '', time: (Date.now() - startTime!) / 1000 }])
+    setStartTime(Date.now());
+
     let currTry: number = cellClicked.length - 1;
     if (currTry >= 0) {
       if (cellClicked[currTry] === cellSequence[currTry]) {
@@ -31,13 +37,9 @@ function GamePlay() {
         setCorrectCell((prev) => [...prev, false]);
       }
     }
-  }, [cellClicked, cellSequence]);
 
-  const handleClick = (row: number, col: number) => {
     const cell = String.fromCharCode(col + 97) + (8 - row).toString();
-    console.log("cell clicked: ", cell);
     setCellClicked((prev) => [...prev, cell]);
-    setStats((prev) => [...prev, time]);
 
     if(fadeOutRef.current) {
       fadeOutRef.current.classList.remove("fade-out");
@@ -45,10 +47,6 @@ function GamePlay() {
       fadeOutRef.current.classList.add("fade-out");
     }
   };
-
-  useEffect(() => {
-    console.log("Cell Sequence:", cellSequence);
-  }, [cellSequence]);
 
   return (
     <div className="w-[80vw] flex justify-center items-center">
@@ -85,7 +83,7 @@ function GamePlay() {
         </div>
       ) : (
         <div className="text-white">
-          {/* Game over content */}
+          <Chart data={stats} width={1500} height={450}/>
         </div>
       )}
     </div>
