@@ -1,10 +1,10 @@
 import { useGoogleLogin } from '@react-oauth/google'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Lock, LogIn, Mail } from 'lucide-react';
-import FormInput from './auth/FormInput';
-import Button from './auth/Button';
+import FormInput from './FormInput';
+import Button from './Button';
 
 interface IFormInput {
     email: string;
@@ -56,7 +56,7 @@ function Login() {
             const { access_token, token_type } = response;
             const userData = {access_token, token_type};
             setUser(userData);
-            navigate('/home');
+            navigate('/profile');
         },
         onError: (err) => {
             console.log(err)

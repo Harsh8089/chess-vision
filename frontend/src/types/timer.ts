@@ -1,6 +1,7 @@
 type Timer = {
     name: string,
-    time: number
+    time: number,
+    label: boolean
 }[]
 
 export default Timer;

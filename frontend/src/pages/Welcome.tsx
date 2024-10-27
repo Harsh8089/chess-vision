@@ -1,4 +1,4 @@
-import Login from '../components/Login';
+import Login from '../components/auth/Login';
 import Register from '../components/Register';
 import "../fonts/css/supreme.css";
 

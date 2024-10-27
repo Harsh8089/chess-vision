@@ -6,8 +6,8 @@ import Column from "../Column";
 import CellResultTracker from "../CellResultTracker";
 import "../../styles/fadeOutText.css"
 import { useSinglePlayer } from "../../context/SinglePlayer";
-import Chart from "../Chart";
 import Timer from "../../types/timer";
+import Stats from "./Stats";
 
 function GamePlay() {
   const { selectedTime, selectedCells, setStartGame } = useSinglePlayer();
@@ -51,11 +51,11 @@ function GamePlay() {
   }, [cellClicked])
 
   const handleClick = (row: number, col: number) => {
-    setStats((prev) => [...prev, { name: '', time: (Date.now() - startTime!) / 1000 }])
-    setStartTime(Date.now());
-
     const cell = String.fromCharCode(col + 97) + (8 - row).toString();
     setCellClicked((prev) => [...prev, cell]);
+
+    setStats((prev) => [...prev, { name: '', time: (Date.now() - startTime!) / 1000, label: correctCell[correctCell.length - 1] }])
+    setStartTime(Date.now());
 
     if(fadeOutRef.current) {
       fadeOutRef.current.classList.remove("fade-out");
@@ -99,9 +99,9 @@ function GamePlay() {
           />
         </div>
       ) : (
-        <div className="text-white">
-          <Chart data={stats} width={1500} height={450}/>
-        </div>
+        <Stats 
+          stats={stats}
+        />
       )}
     </div>
   );

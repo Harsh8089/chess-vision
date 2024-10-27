@@ -6,17 +6,15 @@ function OnePlayer() {
   const { startGame } = useSinglePlayer();
 
   return (
-    <>
-      <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center gap-4">
-          {
-            startGame?  (
-              <GamePlay />
-            ) : (
-              <GameMode />
-            )
-          }
-      </div>
-    </>
+    <div className="w-[80vw] mx-auto py-8 flex flex-col items-center gap-4">
+        {
+          startGame?  (
+            <GamePlay />
+          ) : (
+            <GameMode />
+          )
+        }
+    </div>
   );
 }
 

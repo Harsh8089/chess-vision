@@ -4,10 +4,6 @@ import Logo from "../assets/chess-board.png";
 
 const NavItems = [
     {
-        icon: Crown,
-        to: '/leaderboard'
-    },
-    {
         icon: Sword,
         to: '/single-player'
     },
@@ -15,17 +11,21 @@ const NavItems = [
         icon: Swords,
         to: '/two-player'
     },
+    {
+        icon: Crown,
+        to: '/leaderboard'
+    },
 ];
 
 function Navbar() {
     const location = useLocation();
 
     return (
-        <div className='min-w-[80vw] mx-auto mt-10 flex justify-between items-center'>
+        <div className='w-[80vw] mx-auto mt-10 flex justify-between items-center'>
             <div className="flex gap-10">
                 <Link to="/">
                     <button className="text-2xl tracking-wide font-semibold flex cursor-pointer gap-1">
-                        <img src={Logo} width={22} alt="Logo" />
+                        <img src={Logo} className="w-8" alt="Logo" />
                         <h1>Square</h1>
                         <h1 className="text-blue-light">Blitz</h1>
                     </button>
@@ -60,11 +60,14 @@ function Navbar() {
                     }
                 </div>
             </div>
-            <div className="flex">
-                <button className="hover:opacity-100 opacity-70 transition-all duration-200">
+            <NavLink
+                to="/profile"
+                className={({ isActive }) => `hover:opacity-100  transition-all duration-200 ${isActive? "opacity-100" : "opacity-50"}`}
+            >
+                <button className="">
                     <UserRound color="white" size="25" />
                 </button>
-            </div>
+            </NavLink>
         </div>
     );
 }
